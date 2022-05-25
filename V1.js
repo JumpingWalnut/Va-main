@@ -57,14 +57,14 @@ class Player {
 }////////////
 
 class Platform {
-	constructor({ x, y,sprite }) {
+	constructor({ x, y, sprite=imgPlatform, width=200, height=40 }={}) {
 		this.position = {
 			x,
 			y
 		}
-		this.width = 200
-		this.height = 40
-		this.sprite = imgPlatform;
+		this.width = width;
+		this.height = height;
+		this.sprite = sprite;
 	}
 
 	draw() {
@@ -134,11 +134,17 @@ function init() {
 		new Platform({
 			x:500, 
 			y:150,
+			width:50,
 		}),
 		new Platform({
 			x:700, 
 			y:250,
 			sprite:imgPlayer,
+		}),
+		new Platform({
+			x:500, 
+			y:250,
+			sprite:imgBackground,
 		})
 		]
 
