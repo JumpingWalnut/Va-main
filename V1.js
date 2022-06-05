@@ -5,7 +5,7 @@ let imgGround = document.createElement('img');
 imgGround.src = './img/Ground.png';
 
 let imgPlayer = document.createElement('img');
-imgPlayer.src = './img/guy.jpg';
+imgPlayer.src = './img/Greg.jpg';
 
 let imgBackground = document.createElement('img');
 imgBackground.src = './img/Background.png';
@@ -50,7 +50,6 @@ class Player {
 		}
 
 		else {
-			// this.velocity.y = 0
 			this.jumpCount = 0
 		}
 	}
@@ -93,7 +92,6 @@ class GenericObject {
 			x,
 			y
 		}
-
 		this.width = canvas.width + 1
 		this.height = canvas.height + 1
 	}
@@ -260,7 +258,7 @@ function animate() {
 
 	// win condition
 	if (scrollOffset > 2000) {
-		console.log('uou win');
+		console.log('you win');
 	}
 
 	//lose condition
@@ -278,25 +276,28 @@ addEventListener('keydown', ({ keyCode }) => {
 	
 	switch (keyCode) {
 		case 65:
-			//console.log('left')
+			//Left
 			keys.left.pressed = true 
 			break
 		
 		case 83:
-			//console.log('down')
+			//Down
 			break
 
 		case 68:
-			//console.log('right')
+			//Right
 			keys.right.pressed = true
 			break
 
 		case 87:
-			//console.log('up')
+			//Up
 			if (player.jumpCount < 2 && player.isJumping == false){
 				player.velocity.y = -10
 				player.jumpCount += 1
 				player.isJumping = true;
+				console.log('Key down')
+				console.log(player.isJumping)
+				console.log(jumpCount)
 			}
 			else{
 
@@ -309,23 +310,24 @@ addEventListener('keyup', ({ keyCode }) => {
 	
 	switch (keyCode) {
 		case 65:
-			//console.log('left')
+			//Left
 			keys.left.pressed = false 
 			break
 		
 		case 83:
-			//console.log('down')
+			//Down
 			break
 
 		case 68:
-			//console.log('right')
+			//Right
 			keys.right.pressed = false
 			break
 
 		case 87:
-			//console.log('up')
-			//player.velocity.y -= 10
+			//Up
 			player.isJumping = false;
+			console.log('keyup')
+			console.log(player.isJumping)
 			break
 
 	}
