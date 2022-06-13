@@ -5,7 +5,7 @@ let imgGround = document.createElement('img');
 imgGround.src = './img/Ground.png';
 
 let imgPlayer = document.createElement('img');
-imgPlayer.src = './img/Greg.jpg';
+imgPlayer.src = './img/Greg.png';
 
 let imgBackground = document.createElement('img');
 imgBackground.src = './img/Background.png';
@@ -20,7 +20,7 @@ const gravity = 0.5
 
 class Player {
 	constructor() {
-		this.speed = 10;
+		this.speed = 8;
 		this.position = {
 			x: 100,
 			y: 100
@@ -72,13 +72,13 @@ class Platform {
 }
 
 class Ground {
-	constructor({ x, y }) {
+	constructor({ x, y, width=600, height=80 }={}) {
 		this.position = {
 			x,
-			y
+			y: 497
 		}
-		this.width = 600
-		this.height = 80
+		this.width = width
+		this.height = height
 	}
 
 	draw() {
@@ -126,22 +126,22 @@ function init() {
 
 	platforms = [
 		new Platform({
-			x:200, 
+			x:600, 
 			y:300,
 		}), 
 		new Platform({
-			x:500, 
+			x:600, 
 			y:150,
 			width:50,
 		}),
 		new Platform({
-			x:700, 
-			y:250,
-			sprite:imgPlayer,
+			x:1500, 
+			y:300,
+			
 		}),
 		new Platform({
-			x:500, 
-			y:250,
+			x:1700, 
+			y:300,
 			sprite:imgBackground,
 		})
 		]
@@ -149,12 +149,18 @@ function init() {
 	grounds = [
 		new Ground({
 			x:-1,
-			y:497,
 		}),
 		new Ground({
 			x: 599,
-			y: 497,
-		})
+		}),
+		new Ground({
+			x: 1499,
+			width: 400,
+		}),
+		new Ground({
+			x: 2600,
+			width: 100,
+		}),
 	]
 
 	genericObjects = [ 
@@ -188,9 +194,9 @@ function animate() {
 	player.update();
 
 	//Right and Left Movement
-	if (keys.right.pressed && player.position.x < 400) {
+	if (keys.right.pressed && player.position.x < 500) {
 		player.velocity.x = player.speed
-	} else if (keys.left.pressed && player.position.x > 100) {
+	} else if (keys.left.pressed && player.position.x > 300) {
 		player.velocity.x = -player.speed
 	} else {
 		player.velocity.x = 0
@@ -203,9 +209,9 @@ function animate() {
 			grounds.forEach(ground => {
 				ground.position.x -= player.speed;
 			})
-			genericObjects.forEach(genericObject => {
-				genericObject.position.x -= player.speed * .66;
-			})
+			// genericObjects.forEach(genericObject => {
+			// 	genericObject.position.x -= player.speed * .66;
+			// })
 
 			
 		}else if (keys.left.pressed) {
@@ -217,9 +223,9 @@ function animate() {
 				grounds.forEach(ground => {
 					ground.position.x += player.speed;
 				})
-				genericObjects.forEach(genericObject => {
-					genericObject.position.x += player.speed * .66;
-				})
+				// genericObjects.forEach(genericObject => {
+				// 	genericObject.position.x += player.speed * .66;
+				// })
 			}
 			else if (player.position.x > -5) {
 				player.position.x -= 5;
