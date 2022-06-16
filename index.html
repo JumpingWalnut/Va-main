@@ -8,12 +8,45 @@
 			align-items: center;
 			justify-content: center;
 			height: 100vh;
-
 		}
+
+		#start, #game-over {
+			font-family:Ariel, Helvetica, sans-serif;
+			color: #FFFFFF;
+			padding: 20px;
+			position: fixed;
+			top:50%;
+			left:50%;
+			margin-top: -100px;
+			margin-left: -100px;
+		}
+
+		#start a, #game-over a{
+			border: 3px solid #FFFFFF;
+			color: #FFFFFF;
+			text-decoration: none;
+			padding: 10px;
+			border-radius: 15px;
+			cursor: pointer;
+			display: block;
+			text-align: center;
+			font-size: 2em;
+			display: inline-block;
+		}
+
+		#start a:hover, #game-over a:hover { background-color: #FFFFFF: color: #1bafdb; }
 	</style>
 </head>
 <body>
-	<canvas id="canvas"></canvas>
+	
+	<canvas id="canvas" ></canvas>
+	<!-- <div id='start' class='screen' style='display:block'>
+		<a onclick='startGame()'> Start Game</a>
+	</div>
+
+	<div id='game-over' style='display:None'>
+		<a onclick='gameOver()'> Game Over</a>
+	</div> -->
 	<script type="module" src="V1.js"></script>
 </body>
 </html>

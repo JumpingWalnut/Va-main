@@ -7,6 +7,9 @@ imgGround.src = './img/Ground.png';
 let imgPlayer = document.createElement('img');
 imgPlayer.src = './img/Greg.png';
 
+let imgEnemy1 = document.createElement('img');
+imgEnemy1 = './img/enemy1.jpg';
+
 let imgBackground = document.createElement('img');
 imgBackground.src = './img/Background.png';
 
@@ -16,14 +19,36 @@ const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
 
-const gravity = 0.5
+const gravity = 0.5;
+
+// function startGame() {
+// 	let startDiv = document.getElementById("start");
+// 	let gameCanvas = document.getElementById("canvas");
+// 	let gameOver = document.getElementById("game-over");
+// 	startDiv.style.display = "none";
+// 	gameCanvas.style.display = "block";
+// 	gameOver.style.display = "none";
+// 	start()
+// }
+
+// function gameOver() {
+// 	let startDiv = document.getElementById("start");
+// 	let gameCanvas = document.getElementById("canvas");
+// 	let gameOver = document.getElementById("game-over");
+// 	startDiv.style.display = "none";
+// 	gameCanvas.style.display = "none";
+// 	gameOver.style.display = "block";
+// 	start();
+// }
+
+
 
 class Player {
 	constructor() {
 		this.speed = 8;
 		this.position = {
-			x: 100,
-			y: 100
+			x: 50,
+			y: 200,
 		}
 
 		this.velocity = {
@@ -55,11 +80,43 @@ class Player {
 	}
 }////////////
 
+class Alfred {
+	constructor(){
+		this.speed = 3;
+		this.position = {
+			x,
+			y,
+		}
+
+		this.velocity = {
+			x: 0,
+			y: 1,
+		}
+
+		this.width = 60;
+		this.height = 60;
+	}
+
+	draw() {
+		c.drawImage(imgEnemy1, this.position.x, this.position.y, this.width, this.height);
+	}
+
+	update() {
+		this.position.x += this.velocity.x
+		this.position.y += this.velocity.y
+		this.draw()
+		if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+			this.velocity.y += gravity
+		}
+	}
+
+}
+
 class Platform {
 	constructor({ x, y, sprite=imgPlatform, width=200, height=40 }={}) {
 		this.position = {
 			x,
-			y
+			y,
 		}
 		this.width = width;
 		this.height = height;
@@ -142,7 +199,6 @@ function init() {
 		new Platform({
 			x:1700, 
 			y:300,
-			sprite:imgBackground,
 		})
 		]
 
@@ -273,6 +329,8 @@ function animate() {
 	}
 
 }
+
+
 init();
 animate();
 
@@ -303,7 +361,6 @@ addEventListener('keydown', ({ keyCode }) => {
 				player.isJumping = true;
 				console.log('Key down')
 				console.log(player.isJumping)
-				console.log(jumpCount)
 			}
 			else{
 
@@ -338,6 +395,9 @@ addEventListener('keyup', ({ keyCode }) => {
 
 	}
 })
+
+
+
 
 
 
