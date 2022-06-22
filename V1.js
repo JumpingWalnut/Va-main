@@ -24,28 +24,6 @@ canvas.height = 576;
 
 const gravity = 0.5;
 
-
-// function startGame() {
-// 	let startDiv = document.getElementById("start");
-// 	let gameCanvas = document.getElementById("canvas");
-// 	let gameOver = document.getElementById("game-over");
-// 	startDiv.style.display = "none";
-// 	gameCanvas.style.display = "block";
-// 	gameOver.style.display = "none";
-// 	start()
-// }
-
-// function gameOver() {
-// 	let startDiv = document.getElementById("start");
-// 	let gameCanvas = document.getElementById("canvas");
-// 	let gameOver = document.getElementById("game-over");
-// 	startDiv.style.display = "none";
-// 	gameCanvas.style.display = "none";
-// 	gameOver.style.display = "block";
-// 	start();
-// }
-
-
 class Player {
 	constructor() {
 		this.speed = 8;
@@ -261,23 +239,31 @@ function plat_collision(){
 
 	//Player
 	platforms.forEach(platform => {
-		if (player.position.y + player.height 
+		if (player.position.x + player.width >= 
+			platform.position.x && player.position.x <= platform.position.x + platform.width && player.position.y + player.height 
 			<= platform.position.y && player.position.y + 
 			player.height + player.velocity.y >= 
-			platform.position.y && player.position.x + 
-			player.width >= platform.position.x && player.position.x 
-			<= platform.position.x + platform.width){
+			platform.position.y){
 
 			player.velocity.y = 0
 			player.jumpCount = 0
 		}
 
-		else if (player.position.y + player.height <= platform.position.y + platform.height && 
-			player.position.y + player.height + player.velocity.y <= platform.position.y + platform.position.y &&
-			player.position.x + player.width >= platform.position.x 
-			&& player.position.x <= platform.position.x + platform.width)
+		//Sideways Collision
+		else if (player.position.x + player.width >= platform.position.x 
+			&& player.position.x <= platform.position.x + platform.width && player.position.y + player.height >= platform.position.y
+			&& player.position.y + player.height <= platform.position.y + platform.height + player.height){
 
-			player.velocity.y *= -1
+			player.velocity.x = 0
+		}
+
+			
+
+		// else if (player.position.x + player.width >= platform.position.x && player.position.x <= platform.position.x + platform.width 
+		// 	&& player.position.y + player.height <= platform.position.y + platform.height){
+
+		// 	player.velocity.y -= 10
+		// }
 			
 	})
 
@@ -464,34 +450,6 @@ function animate() {
 	ground_collision();
 	
 
-
-	// //Platform Collision
-	// platforms.forEach(platform => {
-	// 	if (player.position.y + player.height 
-	// 		<= platform.position.y && player.position.y + 
-	// 		player.height + player.velocity.y >= 
-	// 		platform.position.y && player.position.x + 
-	// 		player.width >= platform.position.x && player.position.x 
-	// 		<= platform.position.x + platform.width){
-
-	// 		player.velocity.y = 0
-	// 		player.jumpCount = 0
-	// 	}
-	// })
-
-	// grounds.forEach(ground => {
-	// 	if (player.position.y + player.height 
-	// 		<= ground.position.y && player.position.y + 
-	// 		player.height + player.velocity.y >= 
-	// 		ground.position.y && player.position.x + 
-	// 		player.width >= ground.position.x && player.position.x 
-	// 		<= ground.position.x + ground.width){
-
-	// 		player.velocity.y = 0
-	// 		player.jumpCount = 0
-	// 	}
-	// })
-
 	// win condition
 	if (scrollOffset > 2000) {
 		console.log('you win');
@@ -561,7 +519,6 @@ addEventListener('keyup', ({ keyCode }) => {
 		case 87:
 			//Up
 			player.isJumping = false;
-			console.log(player.isJumping)
 			break
 
 	}
