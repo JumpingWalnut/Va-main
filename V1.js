@@ -7,8 +7,11 @@ imgGround.src = './img/Ground.png';
 let imgPlayer = document.createElement('img');
 imgPlayer.src = './img/Greg.png';
 
-let imgEnemy1 = document.createElement('img');
-imgEnemy1 = './img/enemy1.jpg';
+let imgRed = document.createElement('img');
+imgRed.src = './img/red.png';
+
+let imgOrange = document.createElement('img');
+imgOrange.src = './img/orange.png';
 
 let imgBackground = document.createElement('img');
 imgBackground.src = './img/Background.png';
@@ -20,6 +23,7 @@ canvas.width = 1024;
 canvas.height = 576;
 
 const gravity = 0.5;
+
 
 // function startGame() {
 // 	let startDiv = document.getElementById("start");
@@ -40,7 +44,6 @@ const gravity = 0.5;
 // 	gameOver.style.display = "block";
 // 	start();
 // }
-
 
 
 class Player {
@@ -76,16 +79,64 @@ class Player {
 
 		else {
 			this.jumpCount = 0
+
+		}
+		
+	}
+}
+
+function player_mvmt(){
+	//Right and Left Movement
+	if (keys.right.pressed && player.position.x < 500) {
+		player.velocity.x = player.speed
+	} else if (keys.left.pressed && player.position.x > 300) {
+		player.velocity.x = -player.speed
+	} else {
+		player.velocity.x = 0
+
+		if (keys.right.pressed) {
+			scrollOffset += player.speed
+			platforms.forEach(platform => {
+				platform.position.x -= player.speed;
+			})
+			grounds.forEach(ground => {
+				ground.position.x -= player.speed;
+			})
+			zones.forEach(zone => {
+				zone.position.x -= player.speed;
+			})
+			alfred.position.x -= player.speed;
+
+
+			
+		}else if (keys.left.pressed) {
+			if (scrollOffset > 0) {
+				scrollOffset -= player.speed
+				platforms.forEach(platform => {
+					platform.position.x += player.speed;
+				})
+				grounds.forEach(ground => {
+					ground.position.x += player.speed;
+				})
+				zones.forEach(zone => {
+					zone.position.x += player.speed;
+				})
+				alfred.position.x += player.speed
+			}
+			else if (player.position.x > -5) {
+				player.position.x -= 5;
+			}
 		}
 	}
-}////////////
+}
+
 
 class Alfred {
 	constructor(){
 		this.speed = 3;
 		this.position = {
-			x,
-			y,
+			x: 600,
+			y: 50,
 		}
 
 		this.velocity = {
@@ -98,17 +149,66 @@ class Alfred {
 	}
 
 	draw() {
-		c.drawImage(imgEnemy1, this.position.x, this.position.y, this.width, this.height);
+		c.drawImage(imgOrange, this.position.x, this.position.y, this.width, this.height);
 	}
 
-	update() {
+	update1() {
 		this.position.x += this.velocity.x
 		this.position.y += this.velocity.y
 		this.draw()
 		if (this.position.y + this.height + this.velocity.y <= canvas.height) {
 			this.velocity.y += gravity
 		}
+		else {
+
+		}
 	}
+
+}
+
+function al_mvmt(){
+	
+	if (alfred.position.x > zones[0].position.x ) {
+		alfred.velocity.x = alfred.speed
+	} else if (alfred.position.x < zones.width) {
+		alfred.velocity.x = -alfred.speed
+	} else {
+		alfred.velocity.x = 0
+
+		if (alfred.velocity.x > 0) {
+			scrollOffset += alfred.speed
+			platforms.forEach(platform => {
+				platform.position.x -= alfred.speed;
+			})
+			grounds.forEach(ground => {
+				ground.position.x -= alfred.speed;
+			})
+			zones.forEach(zone => {
+				zone.position.x -= alfred.speed;
+			})
+
+			
+		}else if (alfred.velocity.x < 0) {
+			if (scrollOffset > 0) {
+				scrollOffset -= alfred.speed
+				platforms.forEach(platform => {
+					platform.position.x += alfred.speed;
+				})
+				grounds.forEach(ground => {
+					ground.position.x += alfred.speed;
+				})
+				zones.forEach(zone => {
+					zone.position.x += alfred.speed;
+				})
+			}
+			else if (alfred.position.x > -5) {
+				alfred.position.x -= 5;
+			}
+		}
+	}
+}
+
+function enemy_collision(){
 
 }
 
@@ -128,6 +228,74 @@ class Platform {
 	}
 }
 
+function ground_collision(){
+	//Player
+	grounds.forEach(ground => {
+		if (player.position.y + player.height 
+			<= ground.position.y && player.position.y + 
+			player.height + player.velocity.y >= 
+			ground.position.y && player.position.x + 
+			player.width >= ground.position.x && player.position.x 
+			<= ground.position.x + ground.width){
+
+			player.velocity.y = 0
+			player.jumpCount = 0
+		}
+	})
+
+	//Enemy
+	grounds.forEach(ground => {
+		if (alfred.position.y + alfred.height 
+			<= ground.position.y && alfred.position.y + 
+			alfred.height + alfred.velocity.y >= 
+			ground.position.y && alfred.position.x + 
+			alfred.width >= ground.position.x && alfred.position.x 
+			<= ground.position.x + ground.width){
+
+			alfred.velocity.y = 0
+		}
+	})
+}
+
+function plat_collision(){
+
+	//Player
+	platforms.forEach(platform => {
+		if (player.position.y + player.height 
+			<= platform.position.y && player.position.y + 
+			player.height + player.velocity.y >= 
+			platform.position.y && player.position.x + 
+			player.width >= platform.position.x && player.position.x 
+			<= platform.position.x + platform.width){
+
+			player.velocity.y = 0
+			player.jumpCount = 0
+		}
+
+		else if (player.position.y + player.height <= platform.position.y + platform.height && 
+			player.position.y + player.height + player.velocity.y <= platform.position.y + platform.position.y &&
+			player.position.x + player.width >= platform.position.x 
+			&& player.position.x <= platform.position.x + platform.width)
+
+			player.velocity.y *= -1
+			
+	})
+
+	//Enemy
+	platforms.forEach(platform => {
+		if (alfred.position.y + alfred.height 
+			<= platform.position.y && alfred.position.y + 
+			alfred.height + alfred.velocity.y >= 
+			platform.position.y && alfred.position.x + 
+			alfred.width >= platform.position.x && alfred.position.x 
+			<= platform.position.x + platform.width){
+
+			alfred.velocity.y = 0
+			
+		}
+	})
+}
+
 class Ground {
 	constructor({ x, y, width=600, height=80 }={}) {
 		this.position = {
@@ -140,6 +308,22 @@ class Ground {
 
 	draw() {
 		c.drawImage(imgGround, this.position.x, this.position.y, this.width, this.height);
+	}
+}
+
+class Zone {
+	constructor({x, y, width=1000, height=canvas.height+1, sprite=imgRed}={}) {
+		this.position = {
+			x,
+			y,
+		}
+		this.width = width;
+		this.height = height;
+		this.sprite = sprite;	
+		//this.enemies = [a.b.c]	
+	}
+	draw() {
+		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height,);
 	}
 }
 
@@ -159,11 +343,17 @@ class GenericObject {
 
 let player = new Player()
 
+let alfred = new Alfred()
+
 let platforms = []
 
 let grounds = []
 
 let genericObjects = []
+
+let zones = []
+// let z2 = []
+// let z3 = []
 
 const keys = {
 	right: {
@@ -179,12 +369,15 @@ let scrollOffset = 0
 
 
 function init() {
-	player = new Player()
+	player = new Player();
 
+	alfred = new Alfred();
+
+	 
 	platforms = [
 		new Platform({
 			x:600, 
-			y:300,
+			y:400,
 		}), 
 		new Platform({
 			x:600, 
@@ -217,7 +410,14 @@ function init() {
 			x: 2600,
 			width: 100,
 		}),
-	]
+		]
+
+	zones = [ new Zone({
+			x: 0,
+			y: 0,
+			width: 2000
+		})
+		]
 
 	genericObjects = [ 
 		new GenericObject({
@@ -236,8 +436,16 @@ function animate() {
 	c.fillStyle = 'white';
 	c.fillRect(0, 0, canvas.width, canvas.height);
 
+	
+
+	
+
 	genericObjects.forEach(genericObject => {
 		genericObject.draw()
+	})
+
+	zones.forEach(zone => {
+		zone.draw()
 	})
 
 	grounds.forEach(ground => {
@@ -247,76 +455,42 @@ function animate() {
 	platforms.forEach(platform => {
 		platform.draw()
 	})
+
+	alfred.update1();
+	al_mvmt();
 	player.update();
-
-	//Right and Left Movement
-	if (keys.right.pressed && player.position.x < 500) {
-		player.velocity.x = player.speed
-	} else if (keys.left.pressed && player.position.x > 300) {
-		player.velocity.x = -player.speed
-	} else {
-		player.velocity.x = 0
-
-		if (keys.right.pressed) {
-			scrollOffset += player.speed
-			platforms.forEach(platform => {
-				platform.position.x -= player.speed;
-			})
-			grounds.forEach(ground => {
-				ground.position.x -= player.speed;
-			})
-			// genericObjects.forEach(genericObject => {
-			// 	genericObject.position.x -= player.speed * .66;
-			// })
-
-			
-		}else if (keys.left.pressed) {
-			if (scrollOffset > 0) {
-				scrollOffset -= player.speed
-				platforms.forEach(platform => {
-					platform.position.x += player.speed;
-				})
-				grounds.forEach(ground => {
-					ground.position.x += player.speed;
-				})
-				// genericObjects.forEach(genericObject => {
-				// 	genericObject.position.x += player.speed * .66;
-				// })
-			}
-			else if (player.position.x > -5) {
-				player.position.x -= 5;
-			}
-		}
-	}
+	player_mvmt();
+	plat_collision();
+	ground_collision();
+	
 
 
+	// //Platform Collision
+	// platforms.forEach(platform => {
+	// 	if (player.position.y + player.height 
+	// 		<= platform.position.y && player.position.y + 
+	// 		player.height + player.velocity.y >= 
+	// 		platform.position.y && player.position.x + 
+	// 		player.width >= platform.position.x && player.position.x 
+	// 		<= platform.position.x + platform.width){
 
-	//Platform Collision
-	platforms.forEach(platform => {
-		if (player.position.y + player.height 
-			<= platform.position.y && player.position.y + 
-			player.height + player.velocity.y >= 
-			platform.position.y && player.position.x + 
-			player.width >= platform.position.x && player.position.x 
-			<= platform.position.x + platform.width){
+	// 		player.velocity.y = 0
+	// 		player.jumpCount = 0
+	// 	}
+	// })
 
-			player.velocity.y = 0
-			player.jumpCount = 0
-		}
-	})
+	// grounds.forEach(ground => {
+	// 	if (player.position.y + player.height 
+	// 		<= ground.position.y && player.position.y + 
+	// 		player.height + player.velocity.y >= 
+	// 		ground.position.y && player.position.x + 
+	// 		player.width >= ground.position.x && player.position.x 
+	// 		<= ground.position.x + ground.width){
 
-	grounds.forEach(ground => {
-		if (player.position.y + player.height 
-			<= ground.position.y && player.position.y + 
-			player.height + player.velocity.y >= 
-			ground.position.y && player.position.x + 
-			player.width >= ground.position.x && player.position.x 
-			<= ground.position.x + ground.width){
-
-			player.velocity.y = 0
-			player.jumpCount = 0
-		}
-	})
+	// 		player.velocity.y = 0
+	// 		player.jumpCount = 0
+	// 	}
+	// })
 
 	// win condition
 	if (scrollOffset > 2000) {
@@ -356,11 +530,9 @@ addEventListener('keydown', ({ keyCode }) => {
 		case 87:
 			//Up
 			if (player.jumpCount < 2 && player.isJumping == false){
-				player.velocity.y = -10
-				player.jumpCount += 1
+				player.velocity.y = -10;
+				player.jumpCount += 1;
 				player.isJumping = true;
-				console.log('Key down')
-				console.log(player.isJumping)
 			}
 			else{
 
@@ -374,8 +546,8 @@ addEventListener('keyup', ({ keyCode }) => {
 	switch (keyCode) {
 		case 65:
 			//Left
-			keys.left.pressed = false 
-			break
+			keys.left.pressed = false;
+			break;
 		
 		case 83:
 			//Down
@@ -383,13 +555,12 @@ addEventListener('keyup', ({ keyCode }) => {
 
 		case 68:
 			//Right
-			keys.right.pressed = false
+			keys.right.pressed = false;
 			break
 
 		case 87:
 			//Up
 			player.isJumping = false;
-			console.log('keyup')
 			console.log(player.isJumping)
 			break
 
@@ -403,11 +574,6 @@ addEventListener('keyup', ({ keyCode }) => {
 
 /////////////
 // Testing Github Commit
-
-
-
-
-
 
 
 
