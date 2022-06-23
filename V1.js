@@ -24,12 +24,17 @@ canvas.height = 576;
 
 const gravity = 0.5;
 
+let al_right = 1
+let al_left = 0
+ 
+let lives = 3
+
 class Player {
 	constructor() {
 		this.speed = 8;
 		this.position = {
 			x: 50,
-			y: 200,
+			y: 400,
 		}
 
 		this.velocity = {
@@ -64,6 +69,10 @@ class Player {
 }
 
 function player_mvmt(){
+	// life_counter();
+	// setInterval(life_counter, 2000)
+	threat_detection();
+	
 	//Right and Left Movement
 	if (keys.right.pressed && player.position.x < 500) {
 		player.velocity.x = player.speed
@@ -113,8 +122,8 @@ class Alfred {
 	constructor(){
 		this.speed = 3;
 		this.position = {
-			x: 600,
-			y: 50,
+			x: 300,
+			y: 400,
 		}
 
 		this.velocity = {
@@ -145,49 +154,70 @@ class Alfred {
 }
 
 function al_mvmt(){
-	
-	if (alfred.position.x > zones[0].position.x ) {
-		alfred.velocity.x = alfred.speed
-	} else if (alfred.position.x < zones.width) {
+
+	if (alfred.position.x + alfred.width >= zones[0].position.x + zones[0].width){
+		al_left = 1
+		al_right = 0
+	}else if (alfred.position.x <= zones[0].position.x){
+		al_left = 0
+		al_right = 1
+	}
+
+	if (al_right == 1) {
+		alfred.velocity.x = alfred.speed;
+	}else if (al_left == 1){
 		alfred.velocity.x = -alfred.speed
-	} else {
-		alfred.velocity.x = 0
+	}
 
-		if (alfred.velocity.x > 0) {
-			scrollOffset += alfred.speed
-			platforms.forEach(platform => {
-				platform.position.x -= alfred.speed;
-			})
-			grounds.forEach(ground => {
-				ground.position.x -= alfred.speed;
-			})
-			zones.forEach(zone => {
-				zone.position.x -= alfred.speed;
-			})
+}
 
-			
-		}else if (alfred.velocity.x < 0) {
-			if (scrollOffset > 0) {
-				scrollOffset -= alfred.speed
-				platforms.forEach(platform => {
-					platform.position.x += alfred.speed;
-				})
-				grounds.forEach(ground => {
-					ground.position.x += alfred.speed;
-				})
-				zones.forEach(zone => {
-					zone.position.x += alfred.speed;
-				})
-			}
-			else if (alfred.position.x > -5) {
-				alfred.position.x -= 5;
-			}
-		}
+function life_counter(){
+	if (lives == 0){
+		init()
 	}
 }
 
-function enemy_collision(){
+function threat_detection(){
 
+	if (player.position.x + player.width >=  alfred.position.x && player.position.x <= alfred.position.x + alfred.width
+		&& player.position.y + player.height >= alfred.position.y && player.position.y <= alfred.position.y + alfred.height){
+
+		lives = lives - 1
+	}
+}
+
+class Zone {
+	constructor({x, y, width=1000, height=canvas.height+1, sprite=imgRed}={}) {
+		this.position = {
+			x,
+			y,
+		}
+		this.width = width;
+		this.height = height;
+		this.sprite = sprite;	
+		this.enemies = [Alfred]
+		this.zones = [z0, z1, z2]	
+	}
+	draw() {
+		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height,);
+	}
+}
+
+class z0 {
+	constructor(){
+
+	}
+}
+
+class z1 {
+	constructor(){
+
+	}
+}
+class z2 {
+	constructor(){
+
+	}
 }
 
 class Platform {
@@ -256,14 +286,6 @@ function plat_collision(){
 
 			player.velocity.x = 0
 		}
-
-			
-
-		// else if (player.position.x + player.width >= platform.position.x && player.position.x <= platform.position.x + platform.width 
-		// 	&& player.position.y + player.height <= platform.position.y + platform.height){
-
-		// 	player.velocity.y -= 10
-		// }
 			
 	})
 
@@ -297,22 +319,6 @@ class Ground {
 	}
 }
 
-class Zone {
-	constructor({x, y, width=1000, height=canvas.height+1, sprite=imgRed}={}) {
-		this.position = {
-			x,
-			y,
-		}
-		this.width = width;
-		this.height = height;
-		this.sprite = sprite;	
-		//this.enemies = [a.b.c]	
-	}
-	draw() {
-		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height,);
-	}
-}
-
 class GenericObject {
 	constructor({ x, y }) {
 		this.position = {
@@ -327,39 +333,7 @@ class GenericObject {
 	}
 }
 
-let player = new Player()
-
-let alfred = new Alfred()
-
-let platforms = []
-
-let grounds = []
-
-let genericObjects = []
-
-let zones = []
-// let z2 = []
-// let z3 = []
-
-const keys = {
-	right: {
-		pressed: false
-	},
-	left: {
-		pressed: false
-	},
-}
-
-let scrollOffset = 0
-
-
-
-function init() {
-	player = new Player();
-
-	alfred = new Alfred();
-
-	 
+function createLvl(){
 	platforms = [
 		new Platform({
 			x:600, 
@@ -380,6 +354,42 @@ function init() {
 			y:300,
 		})
 		]
+}
+
+let player = new Player()
+
+let alfred = new Alfred()
+
+let platforms = []
+
+let grounds = []
+
+let genericObjects = []
+
+let zones = []
+
+const keys = {
+	right: {
+		pressed: false
+	},
+	left: {
+		pressed: false
+	},
+}
+
+let scrollOffset = 0
+
+
+
+
+
+function init() {
+	player = new Player();
+
+	alfred = new Alfred();
+
+	 
+	createLvl();
 
 	grounds = [
 		new Ground({
@@ -401,7 +411,7 @@ function init() {
 	zones = [ new Zone({
 			x: 0,
 			y: 0,
-			width: 2000
+			width: 600
 		})
 		]
 
@@ -421,10 +431,6 @@ function animate() {
 	requestAnimationFrame(animate)
 	c.fillStyle = 'white';
 	c.fillRect(0, 0, canvas.width, canvas.height);
-
-	
-
-	
 
 	genericObjects.forEach(genericObject => {
 		genericObject.draw()
