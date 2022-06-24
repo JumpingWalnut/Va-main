@@ -7,6 +7,12 @@ imgGround.src = './img/Ground.png';
 let imgPlayer = document.createElement('img');
 imgPlayer.src = './img/Greg.png';
 
+let imgPlayerStand = document.createElement('img');
+imgPlayerStand.src = './img/Huntress/Sprites/Character/idle.png';
+
+let imgPlayerRunRight = document.createElement('img');
+imgPlayerRunRight.src = './img/Huntress/Sprites/Character/Run.png';
+
 let imgRed = document.createElement('img');
 imgRed.src = './img/red.png';
 
@@ -30,11 +36,11 @@ let al_left = 0
 let lives = 3
 
 class Player {
-	constructor() {
+	constructor({}={}) {
 		this.speed = 8;
 		this.position = {
 			x: 50,
-			y: 400,
+			y: 200,
 		}
 
 		this.velocity = {
@@ -42,37 +48,166 @@ class Player {
 			y: 1
 		}
 
-		this.width = 30
-		this.height = 30
+		this.width = 80
+		this.height = 60
 		this.jumpCount = 0
 		this.isJumping = false
+		this.frames = 0
+		this.hitbox={
+			x:80,
+			y:80,
+		}
+
+		this.sprite = imgPlayerStand
+		this.sprites = {
+			stand: {
+				right: imgPlayerStand,
+				cropWidth: 80,
+				width: 80,
+			},
+			run: {
+				right: imgPlayerRunRight,
+				cropWidth: 80,
+				width: 100,
+			}
+		}
+		this.currentSprite = this.sprites.stand.right
+		this.currentCropWidth = 80;
+		this.currentWidth=100;
 	}
 
 	draw() {
-		c.drawImage(imgPlayer, this.position.x, this.position.y, this.width, this.height);
+
+		c.drawImage(this.currentSprite, this.currentWidth*this.frames + 30, 30, this.currentCropWidth-30, 40, this.position.x, this.position.y, this.width, this.height);
 	}
 
 	update() {
-		this.position.x += this.velocity.x
-		this.position.y += this.velocity.y
-		this.draw()
+		this.frames++
+		if (this.frames >8 && this.currentSprite === this.sprites.stand.right) {
+			this.frames = 0;
+		}
+		else if (this.frames > 6 && this.currentSprite === this.sprites.run.right){
+			this.frames = 0;
+		}
+
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
+		this.draw();
 		if (this.position.y + this.height + this.velocity.y <= canvas.height) {
 			this.velocity.y += gravity
 		}
 
 		else {
-			this.jumpCount = 0
+			this.jumpCount = 0;
 
 		}
 		
 	}
 }
 
+class Alfred {
+	constructor(){
+		this.speed = 1.5;
+		this.position = {
+			x: 300,
+			y: 100,
+		}
+
+		this.velocity = {
+			x: 0,
+			y: 1,
+		}
+
+		this.width = 60;
+		this.height = 60;
+	}
+
+	draw() {
+		c.drawImage(imgOrange, this.position.x, this.position.y, this.width, this.height);
+	}
+
+	update1() {
+		this.position.x += this.velocity.x
+		this.position.y += this.velocity.y
+		this.draw()
+		if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+			this.velocity.y += gravity
+		}
+		else {
+
+		}
+	}
+
+}
+
+class Zone {
+	constructor({x, y, width=1000, height=canvas.height+1, sprite=imgRed}={}) {
+		this.position = {
+			x,
+			y,
+		}
+		this.width = width;
+		this.height = height;
+		this.sprite = sprite;	
+		this.enemies = [Alfred]
+		this.zones = [z0, z1, z2]	
+	}
+	draw() {
+		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height,);
+	}
+}
+
+class Platform {
+	constructor({ x, y, sprite=imgPlatform, width=200, height=40 }={}) {
+		this.position = {
+			x,
+			y,
+		}
+		this.width = width;
+		this.height = height;
+		this.sprite = sprite;
+	}
+
+	draw() {
+		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height);
+	}
+}
+
+class Ground {
+	constructor({ x, y, width=600, height=80 }={}) {
+		this.position = {
+			x,
+			y: 497
+		}
+		this.width = width
+		this.height = height
+	}
+
+	draw() {
+		c.drawImage(imgGround, this.position.x, this.position.y, this.width, this.height);
+	}
+}
+
+class GenericObject {
+	constructor({ x, y }) {
+		this.position = {
+			x,
+			y
+		}
+		this.width = canvas.width + 1
+		this.height = canvas.height + 1
+	}
+	draw() {
+		c.drawImage(imgBackground, this.position.x, this.position.y, this.width, this.height);
+	}
+}
+
+
+
+
 function player_mvmt(){
-	// life_counter();
-	// setInterval(life_counter, 2000)
-	threat_detection();
 	
+	threat_detection();
 	//Right and Left Movement
 	if (keys.right.pressed && player.position.x < 500) {
 		player.velocity.x = player.speed
@@ -116,46 +251,9 @@ function player_mvmt(){
 		}
 	}
 }
-
-
-class Alfred {
-	constructor(){
-		this.speed = 3;
-		this.position = {
-			x: 300,
-			y: 400,
-		}
-
-		this.velocity = {
-			x: 0,
-			y: 1,
-		}
-
-		this.width = 60;
-		this.height = 60;
-	}
-
-	draw() {
-		c.drawImage(imgOrange, this.position.x, this.position.y, this.width, this.height);
-	}
-
-	update1() {
-		this.position.x += this.velocity.x
-		this.position.y += this.velocity.y
-		this.draw()
-		if (this.position.y + this.height + this.velocity.y <= canvas.height) {
-			this.velocity.y += gravity
-		}
-		else {
-
-		}
-	}
-
-}
-
 function al_mvmt(){
 
-	if (alfred.position.x + alfred.width >= zones[0].position.x + zones[0].width){
+	if (alfred.position.x + alfred.width >= zones[0].position.x + zones[0].width ){
 		al_left = 1
 		al_right = 0
 	}else if (alfred.position.x <= zones[0].position.x){
@@ -163,45 +261,43 @@ function al_mvmt(){
 		al_right = 1
 	}
 
-	if (al_right == 1) {
+	if (al_right == 1 && alfred.velocity.y <= 1	) {
 		alfred.velocity.x = alfred.speed;
-	}else if (al_left == 1){
+	}else if (al_left == 1  && alfred.velocity.y <= 1){
 		alfred.velocity.x = -alfred.speed
 	}
 
 }
 
 function life_counter(){
-	if (lives == 0){
-		init()
-	}
+	
+	
 }
 
 function threat_detection(){
-
+	// var count = document.getElementById("counter");
+	// count.innerHTML = lives;
 	if (player.position.x + player.width >=  alfred.position.x && player.position.x <= alfred.position.x + alfred.width
 		&& player.position.y + player.height >= alfred.position.y && player.position.y <= alfred.position.y + alfred.height){
 
 		lives = lives - 1
+		
+	}
+	// if (lives == 0){
+	// 	init()
+	// }
+}
+
+
+
+class Heart {
+	constructor() {
+		
 	}
 }
 
-class Zone {
-	constructor({x, y, width=1000, height=canvas.height+1, sprite=imgRed}={}) {
-		this.position = {
-			x,
-			y,
-		}
-		this.width = width;
-		this.height = height;
-		this.sprite = sprite;	
-		this.enemies = [Alfred]
-		this.zones = [z0, z1, z2]	
-	}
-	draw() {
-		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height,);
-	}
-}
+
+
 
 class z0 {
 	constructor(){
@@ -220,21 +316,7 @@ class z2 {
 	}
 }
 
-class Platform {
-	constructor({ x, y, sprite=imgPlatform, width=200, height=40 }={}) {
-		this.position = {
-			x,
-			y,
-		}
-		this.width = width;
-		this.height = height;
-		this.sprite = sprite;
-	}
 
-	draw() {
-		c.drawImage(this.sprite, this.position.x, this.position.y, this.width, this.height);
-	}
-}
 
 function ground_collision(){
 	//Player
@@ -286,6 +368,13 @@ function plat_collision(){
 
 			player.velocity.x = 0
 		}
+		else if (player.position.x + player.width >= 
+			platform.position.x && player.position.x <= platform.position.x + platform.width 
+			&& platform.position.y <= player.position.y <= platform.position.y + platform.width  &&
+			player.position.y + player.height > 0)
+				{console.log("up hit");
+				player.velocity.y = -player.velocity.y; }
+			//<= platform.position.x + platform.position.width && platform.position.y + platform.height <= player.position.y <= platform.position.y 
 			
 	})
 
@@ -304,40 +393,11 @@ function plat_collision(){
 	})
 }
 
-class Ground {
-	constructor({ x, y, width=600, height=80 }={}) {
-		this.position = {
-			x,
-			y: 497
-		}
-		this.width = width
-		this.height = height
-	}
-
-	draw() {
-		c.drawImage(imgGround, this.position.x, this.position.y, this.width, this.height);
-	}
-}
-
-class GenericObject {
-	constructor({ x, y }) {
-		this.position = {
-			x,
-			y
-		}
-		this.width = canvas.width + 1
-		this.height = canvas.height + 1
-	}
-	draw() {
-		c.drawImage(imgBackground, this.position.x, this.position.y, this.width, this.height);
-	}
-}
-
 function createLvl(){
 	platforms = [
 		new Platform({
-			x:600, 
-			y:400,
+			x:200, 
+			y:300,
 		}), 
 		new Platform({
 			x:600, 
@@ -379,16 +439,11 @@ const keys = {
 
 let scrollOffset = 0
 
-
-
-
-
 function init() {
 	player = new Player();
 
 	alfred = new Alfred();
 
-	 
 	createLvl();
 
 	grounds = [
@@ -424,11 +479,16 @@ function init() {
 
 	scrollOffset = 0
 
+	lives = 3
+
 }
 
 function animate() {
 	
-	requestAnimationFrame(animate)
+	setTimeout(function () {
+		requestAnimationFrame(animate);
+	}, 1000/50 );		
+	
 	c.fillStyle = 'white';
 	c.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -444,17 +504,31 @@ function animate() {
 		ground.draw()
 	})
 
+
+	c.beginPath();	
+	c.fillRect(player.position.x, player.position.y, player.width, player.height);
+	c.stroke();
+
+platforms.forEach(platform => {
+	c.beginPath();	
+	c.fillRect(platform.position.x, platform.position.y, platform.width, platform.height);
+	c.stroke();
+})
+
+
 	platforms.forEach(platform => {
 		platform.draw()
 	})
 
+	
 	alfred.update1();
 	al_mvmt();
 	player.update();
 	player_mvmt();
 	plat_collision();
 	ground_collision();
-	
+
+
 
 	// win condition
 	if (scrollOffset > 2000) {
@@ -465,12 +539,12 @@ function animate() {
 	if (player.position.y > canvas.height) {
 		init();
 	}
-
+	
 }
 
 
 init();
-animate();
+requestAnimationFrame(animate);
 
 //Event Listeners
 
@@ -489,6 +563,9 @@ addEventListener('keydown', ({ keyCode }) => {
 		case 68:
 			//Right
 			keys.right.pressed = true
+			player.currentSprite = player.sprites.run.right;
+			player.currentCropWidth = player.sprites.run.cropWidth;
+			player.width = player.sprites.run.width;
 			break
 
 		case 87:
@@ -520,6 +597,9 @@ addEventListener('keyup', ({ keyCode }) => {
 		case 68:
 			//Right
 			keys.right.pressed = false;
+			player.currentSprite = player.sprites.stand.right;
+			player.currentCropWidth = player.sprites.stand.cropWidth;
+			player.width = player.sprites.stand.width;
 			break
 
 		case 87:
