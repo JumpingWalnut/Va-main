@@ -78,7 +78,7 @@ class Player {
 
 	draw() {
 
-		c.drawImage(this.currentSprite, this.currentWidth*this.frames + 30, 30, this.currentCropWidth-30, 40, this.position.x, this.position.y, this.width, this.height);
+		c.drawImage(this.currentSprite, this.currentWidth*this.frames + 30, 30, this.currentCropWidth-40, 40, this.position.x, this.position.y, this.width, this.height);
 	}
 
 	update() {
@@ -510,15 +510,10 @@ function animate() {
 	})
 
 
-	c.beginPath();	
-	c.fillRect(player.position.x, player.position.y, player.width, player.height);
-	c.stroke();
-
-platforms.forEach(platform => {
-	c.beginPath();	
-	c.fillRect(platform.position.x, platform.position.y, platform.width, platform.height);
-	c.stroke();
-})
+	// Draws Hitbox around Player
+	// c.beginPath();	
+	// c.fillRect(player.position.x, player.position.y, player.width, player.height);
+	// c.stroke();
 
 
 	platforms.forEach(platform => {
