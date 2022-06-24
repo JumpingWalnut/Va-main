@@ -368,15 +368,20 @@ function plat_collision(){
 
 			player.velocity.x = 0
 		}
-		else if (player.position.x + player.width >= 
-			platform.position.x && player.position.x <= platform.position.x + platform.width 
-			&& platform.position.y <= player.position.y <= platform.position.y + platform.width  &&
-			player.position.y + player.height > 0)
-				{console.log("up hit");
-				player.velocity.y = -player.velocity.y; }
+		
+		if ((player.position.x + player.width >= 
+			platform.position.x) && (player.position.x <= platform.position.x + platform.width) 
+			&& (platform.position.y <= player.position.y) && (player.position.y <= platform.position.y + platform.height))
+				
+			{
+				console.log("up hit");
+				player.velocity.y += 1.5;
+			}
+			
+				// player.velocity.y = -player.velocity.y; }
 			//<= platform.position.x + platform.position.width && platform.position.y + platform.height <= player.position.y <= platform.position.y 
 			
-	})
+	});
 
 	//Enemy
 	platforms.forEach(platform => {
