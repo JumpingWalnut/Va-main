@@ -78,7 +78,7 @@ class Player {
 
 	draw() {
 
-		c.drawImage(this.currentSprite, this.currentWidth*this.frames + 30, 30, this.currentCropWidth-30, 40, this.position.x, this.position.y, this.width, this.height);
+		c.drawImage(this.currentSprite, this.currentWidth*this.frames + 30, 30, this.currentCropWidth-40, 40, this.position.x, this.position.y, this.width, this.height);
 	}
 
 	update() {
@@ -368,15 +368,20 @@ function plat_collision(){
 
 			player.velocity.x = 0
 		}
-		else if (player.position.x + player.width >= 
-			platform.position.x && player.position.x <= platform.position.x + platform.width 
-			&& platform.position.y <= player.position.y <= platform.position.y + platform.width  &&
-			player.position.y + player.height > 0)
-				{console.log("up hit");
-				player.velocity.y = -player.velocity.y; }
+		
+		if ((player.position.x + player.width >= 
+			platform.position.x) && (player.position.x <= platform.position.x + platform.width) 
+			&& (platform.position.y <= player.position.y) && (player.position.y <= platform.position.y + platform.height))
+				
+			{
+				console.log("up hit");
+				player.velocity.y += 1.5;
+			}
+			
+				// player.velocity.y = -player.velocity.y; }
 			//<= platform.position.x + platform.position.width && platform.position.y + platform.height <= player.position.y <= platform.position.y 
 			
-	})
+	});
 
 	//Enemy
 	platforms.forEach(platform => {
@@ -505,15 +510,10 @@ function animate() {
 	})
 
 
-	c.beginPath();	
-	c.fillRect(player.position.x, player.position.y, player.width, player.height);
-	c.stroke();
-
-platforms.forEach(platform => {
-	c.beginPath();	
-	c.fillRect(platform.position.x, platform.position.y, platform.width, platform.height);
-	c.stroke();
-})
+	// Draws Hitbox around Player
+	// c.beginPath();	
+	// c.fillRect(player.position.x, player.position.y, player.width, player.height);
+	// c.stroke();
 
 
 	platforms.forEach(platform => {
